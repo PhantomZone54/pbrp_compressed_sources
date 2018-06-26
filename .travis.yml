@@ -1,0 +1,37 @@
+sudo: required
+addons:
+  apt:
+    update:
+    - true
+    packages:
+    - git
+    - pxz
+    - wput
+before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
+script:
+- travis_wait 1
+- printf '%s\n' '#!/bin/sh' '' 'while true; do' '  df -hlT' '   sleep 120' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+- travis_wait 2
+- cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
+- chmod +x ./magic.sh ./act.sh
+- echo "Running..."; ./act.sh & ./magic.sh $ROMNAME $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+after_success: echo "Congratulations! Job Done!"
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key: "$GitOAUTHToken"
+  file_glob: true
+  file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/$ROMNAME/upload/$ROMNAME/$BRANCH/$ROMNAME-$BRANCH-*
+  on:
+    tags: false
+    repo: rokibhasansagar/twrp_compressed_sources
+    branch: master
+branches:
+  except:
+    - /^(?i:untagged)-.*$/
+after_deploy:
+- cd ${TRAVIS_BUILD_DIR}/ && rm -rf tranSkadooSH/
+- echo "Cleanup Done!"
+notifications:
+  email:
+  - rokibhasansagar2014@outlook.com
