@@ -14,14 +14,14 @@ script:
 - travis_wait 2
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
-- echo "Running..."; ./act.sh & ./magic.sh $ROMNAME $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+- echo "Running..."; ./act.sh & ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 after_success: echo "Congratulations! Job Done!"
 deploy:
   skip_cleanup: true
   provider: releases
   api_key: "$GitOAUTHToken"
   file_glob: true
-  file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/$ROMNAME/upload/$ROMNAME/$BRANCH/$ROMNAME-$BRANCH-*
+  file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/$RecName/upload/$RecName/$BRANCH/$RecName-$BRANCH-*
   on:
     tags: false
     repo: rokibhasansagar/twrp_compressed_sources
