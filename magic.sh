@@ -9,7 +9,7 @@
 
 # Definitions
 DIR=$(pwd)
-ROMNAME=$1
+RecName=$1
 LINK=$2
 BRANCH=$3
 GitHubMail=$4
@@ -47,7 +47,7 @@ git config --global color.ui true
 
 # Main Function
 doSync(){
-    cd $DIR; mkdir -p $ROMNAME/shallow; cd $ROMNAME/shallow
+    cd $DIR; mkdir -p $RecName/shallow; cd $RecName/shallow
 
     # Initialize the repo data fetching
     repo init -q -u $LINK -b $BRANCH --depth 1
@@ -57,55 +57,40 @@ doSync(){
 
     echo -e $CL_RED"SHALLOW Source Syncing done"$CL_RST
 
-    cd $DIR/$ROMNAME/
+    cd $DIR/$RecName/
 	
-    mkdir $ROMNAME-$BRANCH-repo-$(date +%Y%m%d)
+    mkdir $RecName-$BRANCH-repo-$(date +%Y%m%d)
     
-    # Differntiate .repo folder and checked-out files
-    mv shallow/.repo/ $ROMNAME-$BRANCH-repo-$(date +%Y%m%d)
-    mv shallow $ROMNAME-$BRANCH-norepo-$(date +%Y%m%d)
-    
+    mv shallow/.repo/ $RecName-$BRANCH-repo-$(date +%Y%m%d)
+
     # Show Total Sizes of the .repo folder and non-repo files
     echo -en $CL_GRN"The total size of the consolidated .repo is ---  "$CL_RST
-    du -sh $ROMNAME-$BRANCH-repo-$(date +%Y%m%d)
+    du -sh $RecName-$BRANCH-repo-$(date +%Y%m%d)
     echo -en $CL_GRN"The total size of the checked-out files are ---  "$CL_RST
-    du -sh $ROMNAME-$BRANCH-norepo-$(date +%Y%m%d)
-    echo -e "\n"
+    du -sh shallow
 
-    # Compress .repo folder
-    mkdir repoparts
+    # Remove the unnecessary uncompressed checked-out files
+    rm -rf shallow
+
+    # Compress .repo folder in one piece
+    echo -e $CL_RED"Compressing files ---  "$CL_RST
     export XZ_OPT=-6
-    time tar -I pxz -cf - $ROMNAME-$BRANCH-repo-$(date +%Y%m%d)/ | split -b 1024M - repoparts/$ROMNAME-$BRANCH-repo-$(date +%Y%m%d).tar.xz.
-    SHALLOW_R="repoparts/$ROMNAME-$BRANCH-repo-$(date +%Y%m%d).tar.xz.*"
+    time tar -I pxz -cf - $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
 
     # Show Total Sizes of the compressed .repo
     echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
-    du -sh repoparts
+    du -sh $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz
     echo -e "\n"
 
     # Basic Cleanup
-    rm -rf $ROMNAME-$BRANCH-repo-$(date +%Y%m%d)
-
-    # Compress the non-repo floders as well
-    mkdir norepoparts
-    export XZ_OPT=-9e
-    time tar -I pxz -cf - $ROMNAME-$BRANCH-norepo-$(date +%Y%m%d)/ | split -b 1024M - norepoparts/$ROMNAME-$BRANCH-norepo-$(date +%Y%m%d).tar.xz.
-    SHALLOW_NR="norepoparts/$ROMNAME-$BRANCH-norepo-$(date +%Y%m%d).tar.xz.*"
-
-    # Show Total Sizes of the compressed norepo
-    echo -en $CL_BLU"Final Compressed size of the checked-out files are ---  "$CL_RST
-    du -sh norepoparts
-    echo -e "\n"
-
-    # Basic Cleanup
-    rm -rf $ROMNAME-$BRANCH-norepo-$(date +%Y%m%d)
+    rm -rf $RecName-$BRANCH-repo-$(date +%Y%m%d)/
 
     echo -e $CL_RED" SHALLOW Source Compression Done "$CL_RST
 
     sortSyncedParts
     Upload2FTP
 
-    cd $DIR/$ROMNAME
+    cd $DIR/$RecName
 
     echo -e $CL_RED"\nCongratulations! Job Done!"$CL_RST
 
@@ -115,21 +100,19 @@ sortSyncedParts(){
 
     echo -e $CL_RED" SHALLOW Source  .. - ..  Begin to sort "$CL_RST
 
-    cd $DIR/$ROMNAME
+    cd $DIR/$RecName
     rm -rf upload
-    mkdir -p upload/$ROMNAME/$BRANCH
+    mkdir -p upload/$RecName/$BRANCH
 
-    mv $SHALLOW_R upload/$ROMNAME/$BRANCH
-    mv $SHALLOW_NR upload/$ROMNAME/$BRANCH
+    mv $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz upload/$RecName/$BRANCH/
 
     echo -e $CL_PFX" Done sorting "$CL_RST
 
     # Md5s
     echo -e $CL_PFX" Taking md5sums "$CL_RST
 
-    cd $DIR/$ROMNAME/upload/$ROMNAME/$BRANCH
-    md5sum $ROMNAME-$BRANCH-repo* > $ROMNAME-$BRANCH-repo-$(date +%Y%m%d).parts.md5sum
-    md5sum $ROMNAME-$BRANCH-norepo* > $ROMNAME-$BRANCH-norepo-$(date +%Y%m%d).parts.md5sum
+    cd $DIR/$RecName/upload/$RecName/$BRANCH
+    md5sum * > $RecName-$BRANCH-repo-$(date +%Y%m%d).md5sum
 
 }
 
@@ -137,13 +120,11 @@ Upload2FTP(){
 
     echo -e $CL_XOS" Begin to upload "$CL_RST
 
-    cd $DIR/$ROMNAME/upload
+    cd $DIR/$RecName/upload
     
     # Upload
-    SHALLOWUP_R="$ROMNAME/$BRANCH/$ROMNAME-$BRANCH-repo-$(date +%Y%m%d).*"
-    SHALLOWUP_NR="$ROMNAME/$BRANCH/$ROMNAME-$BRANCH-norepo-$(date +%Y%m%d).*"
-    wput $SHALLOWUP_R ftp://"$FTPUser":"$FTPPass"@"$FTPHost"/
-    wput $SHALLOWUP_NR ftp://"$FTPUser":"$FTPPass"@"$FTPHost"/
+    SHALLOWUP="$RecName/$BRANCH/$RecName-$BRANCH-repo*"
+    wput $SHALLOWUP ftp://"$FTPUser":"$FTPPass"@"$FTPHost"/
 
     echo -e $CL_XOS" Done uploading "$CL_RST
 
