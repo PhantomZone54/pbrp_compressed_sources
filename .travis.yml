@@ -14,7 +14,7 @@ script:
 - travis_wait 2
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
-- echo "Running..."; ./act.sh & ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+- echo "Running..."; ./act.sh & ./magic.sh PitchBlack-Recovery $LINK twrp-8.1 $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 after_success: echo "Congratulations! Job Done!"
 deploy:
   skip_cleanup: true
