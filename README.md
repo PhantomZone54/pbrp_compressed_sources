@@ -1,6 +1,6 @@
 # TWRP Compressed Sources
 
-### Compressed Repo and/or Non-repo Folders of Custom Recovery Projects
+### Compressed Repo Folders of Custom Recovery Projects
 
 Sometimes it is hard to get the _repo files_ to build _TWRP_
 :worried:
