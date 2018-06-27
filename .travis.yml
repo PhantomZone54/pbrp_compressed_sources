@@ -10,11 +10,12 @@ addons:
 before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
 script:
 - travis_wait 1
-- printf '%s\n' '#!/bin/sh' '' 'while true; do' '  df -hlT' '   sleep 120' 'done' 'exit 0' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+- printf '%s\n' '#!/bin/sh' '' 'echo $$ >> act_sh.pid' 'while true; do' '  df -hlT' '   sleep 120' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
 - travis_wait 2
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
 - echo "Running..."; ./act.sh & ./magic.sh PitchBlack-Recovery $LINK twrp-8.1 $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+- kill $(cat act_sh.pid) || echo "Process is not running."
 after_success: echo "Congratulations! Job Done!"
 deploy:
   skip_cleanup: true
