@@ -10,7 +10,7 @@ addons:
 before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
 script:
 - travis_wait 1
-- printf '%s\n' '#!/bin/sh' '' 'while true; do' '  df -hlT' '   sleep 120' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+- printf '%s\n' '#!/bin/sh' '' 'while true; do' '  df -hlT' '   sleep 120' 'done' 'exit 0' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
 - travis_wait 2
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
