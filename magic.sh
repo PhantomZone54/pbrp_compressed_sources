@@ -143,4 +143,6 @@ doallstuff(){
 doallstuff
 if [ $? -eq 0 ]; then
     echo "Everything done!"
+    # Try to Kill the act shell
+    kill $(cat act_sh.pid)
 fi
