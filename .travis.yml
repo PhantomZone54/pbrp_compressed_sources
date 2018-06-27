@@ -14,7 +14,7 @@ script:
 - travis_wait 2
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
-- echo "Running..."; ./act.sh & ./magic.sh PitchBlack-Recovery $LINK twrp-8.1 $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+- echo "Running..."; ./act.sh & ./magic.sh PitchBlack-Recovery $LINK twrp-7.1 $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 - kill $(cat act_sh.pid) || echo "Process is not running."
 after_success: echo "Congratulations! Job Done!"
 deploy:
