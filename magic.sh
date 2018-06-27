@@ -74,8 +74,8 @@ doSync(){
 
     # Compress .repo folder in one piece
     echo -e $CL_RED"Compressing files ---  "$CL_RST
-    export XZ_OPT=-6
-    time tar -I pxz -cf - $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
+    export XZ_OPT=-9
+    time tar -I pxz -cf $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
 
     # Show Total Sizes of the compressed .repo
     echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
