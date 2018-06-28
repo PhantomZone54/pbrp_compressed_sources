@@ -5,7 +5,6 @@
 
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/rokibhasansagar/twrp_compressed_sources.svg)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/rokibhasansagar/twrp_compressed_sources.svg)
-[![HitCount](http://hits.dwyl.io/rokibhasansagar/twrp_compressed_sources.svg)](#)
 
 ### Compressed Repo Folders of Custom Recovery Projects
 
@@ -16,7 +15,7 @@ That's why I used _Regalstreak_'s Project *Skadoosh* by slightly modifying as my
 
 But I also modified this so as to work with _Travis CI_ and release the files on GitHub [Releases](https://github.com/rokibhasansagar/twrp_compressed_sources/releases) instead of [AFH](https://www.androidfilehost.com/?w=files&flid=270268).
 
----
+
 ## Download Here:
 
 ### PitchBlack TWRP
