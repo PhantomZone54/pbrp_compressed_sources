@@ -1,0 +1,37 @@
+os: linux
+dist: xenial
+sudo: required
+addons:
+  apt:
+    update: true
+    packages:
+    - git
+    - pxz
+    - wput
+before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
+script:
+- printf '%s\n' '#!/bin/sh' '' 'echo $$ >> act_sh.pid' 'while true; do' '  echo "Disk Size is 30GB. Used Now "' "df -hlT | awk '{ print \$4 }' | sort -g | tail -n 1" '  sleep 350' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+- cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
+- chmod +x ./magic.sh ./act.sh
+- echo "Running..."; ./act.sh & ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
+- kill $(cat act_sh.pid) || echo "Process is not running."
+after_success: echo "Congratulations! Job Done!"
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key: "$GitOAUTHToken"
+  file_glob: true
+  file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/$RecName/upload/$RecName/$BRANCH/$RecName-$BRANCH-*
+  on:
+    tags: false
+    repo: rokibhasansagar/twrp_compressed_sources
+    branch: master
+branches:
+  except:
+    - /^(?i:untagged)-.*$/
+after_deploy:
+- cd ${TRAVIS_BUILD_DIR}/ && rm -rf tranSkadooSH/
+- echo "Cleanup Done!"
+notifications:
+  email:
+  - rokibhasansagar2014@outlook.com
