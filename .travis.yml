@@ -10,7 +10,7 @@ addons:
     - wput
 before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
 script:
-- printf '%s\n' '#!/bin/sh' '' 'echo $$ >> act_sh.pid' 'while true; do' '  df -hlT' '   sleep 350' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+- printf '%s\n' '#!/bin/sh' '' 'while true; do' "  echo -en \$CL_RED'Disk used (out of 30GB) - '\$CL_RST" "  du -sh -BM /dev/sda1 | awk '{print \$1}'" '  sleep 350' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
 - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
 - chmod +x ./magic.sh ./act.sh
 - echo "Running..."; ./act.sh & ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
