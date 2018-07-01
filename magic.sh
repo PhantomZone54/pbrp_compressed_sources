@@ -32,9 +32,9 @@ CL_RST="\033[0m"
 
 # Show total Disc Sizes before all operations
 echo -e $CL_GRN"Total Disc Sizes are:"$CL_RST; df -hlT
+echo -e "\n"
 
 # Get the latest repo
-mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
@@ -66,6 +66,7 @@ doSync(){
     # Show Total Sizes of the .repo folder and non-repo files
     echo -en $CL_GRN"The total size of the consolidated .repo is ---  "$CL_RST
     du -sh $RecName-$BRANCH-repo-$(date +%Y%m%d)
+    DDF=$(du -sh -BM $RecName-$BRANCH-repo-$(date +%Y%m%d) | awk '{print $1}' | sed 's/M//')
     echo -en $CL_GRN"The total size of the checked-out files are ---  "$CL_RST
     du -sh shallow
 
@@ -74,13 +75,25 @@ doSync(){
 
     # Compress .repo folder in one piece
     echo -e $CL_RED"Compressing files ---  "$CL_RST
-    export XZ_OPT=-9
-    time tar -I pxz -cf $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
-
-    # Show Total Sizes of the compressed .repo
-    echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
-    du -sh $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz
-    echo -e "\n"
+    
+    export XZ_OPT=-9e
+    
+    if [ $DDF -gt 1536 ]; then
+      mkdir repoparts
+      echo -e "Compressing and Making 1GB parts \nBe Patient..."
+      time tar -I pxz -cf - $RecName-$BRANCH-repo-$(date +%Y%m%d)/ | split -b 1024M - repoparts/$RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz.
+      SHALLOW="repoparts/$RecName-$BRANCH-repo*"
+      # Show Total Sizes of the compressed .repo
+      echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
+      du -sh repoparts
+    else
+      echo "Compressing into tar.xz file"
+      time tar -I pxz -cf $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
+      SHALLOW=$RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz
+      # Show Total Sizes of the compressed .repo
+      echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
+      du -sh $SHALLOW
+    fi
 
     # Basic Cleanup
     rm -rf $RecName-$BRANCH-repo-$(date +%Y%m%d)/
@@ -104,7 +117,7 @@ sortSyncedParts(){
     rm -rf upload
     mkdir -p upload/$RecName/$BRANCH
 
-    mv $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz upload/$RecName/$BRANCH/
+    mv $SHALLOW upload/$RecName/$BRANCH/
 
     echo -e $CL_PFX" Done sorting "$CL_RST
 
@@ -142,5 +155,5 @@ doallstuff(){
 # So at last do everything
 doallstuff
 if [ $? -eq 0 ]; then
-    echo "Everything done!"
+    echo -e $CL_GRN" Everything done! "$CL_RST
 fi
