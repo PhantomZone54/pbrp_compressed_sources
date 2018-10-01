@@ -19,12 +19,13 @@ But I also modified this so as to work with _Travis CI_ and release the files on
 ## Download Here:
 
 ### PitchBlack TWRP
-- [![PBTWRP](https://img.shields.io/badge/PitchBlack%20TWRP-Download-green.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-9fa885e52804d216fea7)
+- [![PBTWRP Latest 6.0](https://img.shields.io/badge/PitchBlack%20TWRP%20Latest-Download%20Here-green.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/latest)
+- [![PBTWRP](https://img.shields.io/badge/PitchBlack%20TWRP-Download-blue.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-9fa885e52804d216fea7)
 
 >Old
 - [![PBTWRP81](https://img.shields.io/badge/PitchBlack%20TWRP%20(twrp%208.1)-%20Download%20-blue.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-0b8ec540168c7b29f9f0)
 - [![PBTWRP71](https://img.shields.io/badge/PitchBlack%20TWRP%20(twrp%207.1)-%20Download%20-blue.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-e606f624622e4541f719)
 - [![PBTWRP60](https://img.shields.io/badge/PitchBlack%20TWRP%20(twrp%206.0)-%20Download%20-blue.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-3b032ac5d416365ac9ca)
 
-### Omni TWRP
+Omni TWRP
 - [![OMNITWRP](https://img.shields.io/badge/Omni%20TWRP%20(6.0%20and%207.1)-Download-blue.svg)](https://github.com/rokibhasansagar/twrp_compressed_sources/releases/tag/untagged-b8c984918d3f8d824307)
