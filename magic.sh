@@ -46,6 +46,8 @@ echo -e "SHALLOW Source Syncing done"
 rm -rf .repo/
 
 cd $DIR
+mkdir upload/
+
 echo -en "The total size of the checked-out files is ---  "
 du -sh $RecName
 DDF=$(du -sh -BM $RecName | awk '{print $1}' | sed 's/M//')
@@ -55,8 +57,6 @@ cd $RecName
 
 echo -e "Compressing files --- "
 echo -e "Please be patient, this will take time"
-
-mkdir -p ~/$DIR/upload/
 
 export XZ_OPT=-9e
 
