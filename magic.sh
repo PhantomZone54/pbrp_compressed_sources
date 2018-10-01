@@ -9,6 +9,7 @@
 
 # Definitions
 DIR=$(pwd)
+echo -en "Current directory is -- " && echo $DIR
 RecName=$1
 LINK=$2
 BRANCH=$3
@@ -18,17 +19,6 @@ FTPHost=$6
 FTPUser=$7
 FTPPass=$8
 
-# Colors
-CL_XOS="\033[34;1m"
-CL_PFX="\033[33m"
-CL_INS="\033[36m"
-CL_RED="\033[31m"
-CL_GRN="\033[32m"
-CL_YLW="\033[33m"
-CL_BLU="\033[34m"
-CL_MAG="\033[35m"
-CL_CYN="\033[36m"
-CL_RST="\033[0m"
 
 # Get the latest repo
 PATH=~/bin:$PATH
@@ -41,115 +31,63 @@ git config --global user.name $GitHubName
 git config --global color.ui true
 
 
-# Main Function
-doSync(){
-    cd $DIR; mkdir -p $RecName/shallow; cd $RecName/shallow
+# Main Function Starts Here
 
-    # Initialize the repo data fetching
-    repo init -q -u $LINK -b $BRANCH --depth 1
+cd $DIR; mkdir $RecName; cd $RecName
 
-    # Sync it up!
-    time repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j32
+# Initialize the repo data fetching
+repo init -q -u $LINK -b $BRANCH --depth 1
 
-    echo -e $CL_RED"SHALLOW Source Syncing done"$CL_RST
+# Sync it up!
+time repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j32
 
-    cd $DIR/$RecName/
-	
-    mkdir $RecName-$BRANCH-repo-$(date +%Y%m%d)
-    
-    mv shallow/.repo/ $RecName-$BRANCH-repo-$(date +%Y%m%d)
+echo -e "SHALLOW Source Syncing done"
 
-    # Show Total Sizes of the .repo folder and non-repo files
-    echo -en $CL_GRN"The total size of the consolidated .repo is ---  "$CL_RST
-    du -sh $RecName-$BRANCH-repo-$(date +%Y%m%d)
-    DDF=$(du -sh -BM $RecName-$BRANCH-repo-$(date +%Y%m%d) | awk '{print $1}' | sed 's/M//')
-    echo -en $CL_GRN"The total size of the checked-out files are ---  "$CL_RST
-    du -sh shallow
+rm -rf .repo/
 
-    # Remove the unnecessary uncompressed checked-out files
-    rm -rf shallow
+cd $DIR
+echo -en "The total size of the checked-out files is ---  "
+du -sh $RecName
+DDF=$(du -sh -BM $RecName | awk '{print $1}' | sed 's/M//')
+echo -en "Value of DDF is  --- " && echo $DDF
 
-    # Compress .repo folder in one piece
-    echo -e $CL_RED"Compressing files ---  "$CL_RST
-    
-    export XZ_OPT=-9e
-    
-    if [ $DDF -gt 1536 ]; then
-      mkdir repoparts
-      echo -e "Compressing and Making 1GB parts \nBe Patient..."
-      time tar -I pxz -cf - $RecName-$BRANCH-repo-$(date +%Y%m%d)/ | split -b 1024M - repoparts/$RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz.
-      SHALLOW="repoparts/$RecName-$BRANCH-repo*"
-      # Show Total Sizes of the compressed .repo
-      echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
-      du -sh repoparts
-    else
-      echo "Compressing into tar.xz file"
-      time tar -I pxz -cf $RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz $RecName-$BRANCH-repo-$(date +%Y%m%d)/
-      SHALLOW=$RecName-$BRANCH-repo-$(date +%Y%m%d).tar.xz
-      # Show Total Sizes of the compressed .repo
-      echo -en $CL_BLU"Final Compressed size of the consolidated .repo is ---  "$CL_RST
-      du -sh $SHALLOW
-    fi
+cd $RecName
 
-    # Basic Cleanup
-    rm -rf $RecName-$BRANCH-repo-$(date +%Y%m%d)/
+echo -e "Compressing files --- "
+echo -e "Please be patient, this will take time"
 
-    echo -e $CL_RED" SHALLOW Source Compression Done "$CL_RST
+mkdir -p ~/$DIR/upload/
 
-    sortSyncedParts
-    Upload2FTP
+export XZ_OPT=-9e
 
-    cd $DIR/$RecName
-
-    echo -e $CL_RED"\nCongratulations! Job Done!"$CL_RST
-
-}
-
-sortSyncedParts(){
-
-    echo -e $CL_RED" SHALLOW Source  .. - ..  Begin to sort "$CL_RST
-
-    cd $DIR/$RecName
-    rm -rf upload
-    mkdir -p upload/$RecName/$BRANCH
-
-    mv $SHALLOW upload/$RecName/$BRANCH/
-
-    echo -e $CL_PFX" Done sorting "$CL_RST
-
-    # Md5s
-    echo -e $CL_PFX" Taking md5sums "$CL_RST
-
-    cd $DIR/$RecName/upload/$RecName/$BRANCH
-    md5sum * > $RecName-$BRANCH-repo-$(date +%Y%m%d).md5sum
-
-}
-
-Upload2FTP(){
-
-    echo -e $CL_XOS" Begin to upload "$CL_RST
-
-    cd $DIR/$RecName/upload
-    
-    # Upload
-    SHALLOWUP="$RecName/$BRANCH/$RecName-$BRANCH-repo*"
-    wput $SHALLOWUP ftp://"$FTPUser":"$FTPPass"@"$FTPHost"/
-
-    echo -e $CL_XOS" Done uploading "$CL_RST
-
-}
-
-# Do All The Stuff
-doallstuff(){
-
-    # Compress shallow source
-    doSync
-
-}
-
-
-# So at last do everything
-doallstuff
-if [ $? -eq 0 ]; then
-    echo -e $CL_GRN" Everything done! "$CL_RST
+if [ $DDF -gt 8192 ]; then
+  echo -e "Compressing and Making 1.75GB parts Because of Huge Data Amount \nBe Patient..."
+  time tar -I pxz -cf - * | split -b 1792M - $DIR/upload/$RecName-$BRANCH-norepo-$(date +%Y%m%d).tar.xz.
+  # Show Total Sizes of the compressed .repo
+  echo -en "Final Compressed size of the consolidated checked-out files is ---  "
+  du -sh $DIR/upload/
+else
+  time tar -I pxz -cf $DIR/upload/$RecName-$BRANCH-norepo-$(date +%Y%m%d).tar.xz *
+  echo -en "Final Compressed size of the consolidated checked-out archive is ---  "
+  du -sh $DIR/upload/$RecName-$BRANCH-norepo*.tar.xz
 fi
+
+echo -e "Compression Done"
+
+cd $DIR/upload/
+
+md5sum $RecName-$BRANCH-norepo* > $RecName-$BRANCH-norepo-$(date +%Y%m%d).md5sum
+cat $RecName-$BRANCH-norepo-$(date +%Y%m%d).md5sum
+
+echo -en "Final Compressed size of the checked-out files is ---  "
+du -sh $DIR/upload/
+
+echo -e " SHALLOW Source Compression Done "
+
+echo -e " Begin to upload "
+for file in $RecName-$BRANCH*; do wput $file ftp://"$FTPUser":"$FTPPass"@"$FTPHost"//$RecName-NoRepo/ ; done
+echo -e " Done uploading to AFH"
+
+cd $DIR/$RecName
+echo -e "\nCongratulations! Job Done!"
+echo -e " Everything done! "
