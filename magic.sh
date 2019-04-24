@@ -74,6 +74,10 @@ fi
 
 echo -e "Compression Done"
 
+echo -e "Cleanup Files"
+cd $DIR
+rm -rf $RecName
+
 cd $DIR/upload/
 
 md5sum $RecName-$BRANCH-norepo* > $RecName-$BRANCH-norepo-$(date +%Y%m%d).md5sum
@@ -88,6 +92,5 @@ echo -e " Begin to upload "
 for file in $RecName-$BRANCH*; do wput $file ftp://"$FTPUser":"$FTPPass"@"$FTPHost"//$RecName-NoRepo/ ; done
 echo -e " Done uploading to AFH"
 
-cd $DIR/$RecName
 echo -e "\nCongratulations! Job Done!"
 echo -e " Everything done! "
