@@ -9,12 +9,12 @@ addons:
     - pxz
     - wput
 before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
+install: true
 script:
-  - printf '%s\n' '#!/bin/sh' '' 'echo $$ >> act_sh.pid' 'while true; do' '  echo -en "The Time is --- "' "  date +%r" '  sleep 300' 'done' >${TRAVIS_BUILD_DIR}/tranSkadooSH/act.sh
+  - "travis_wait 30 sleep 1800 &"
   - cd ${TRAVIS_BUILD_DIR}/tranSkadooSH
-  - chmod +x ./magic.sh ./act.sh
-  - echo "Running..."; ./act.sh & ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
-  - kill $(cat act_sh.pid) || echo "Process is not running."
+  - chmod +x ./magic.sh
+  - ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 after_success: echo "Congratulations! Job Done!"
 deploy:
   skip_cleanup: true
