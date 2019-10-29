@@ -37,3 +37,4 @@ after_deploy:
 notifications:
   email:
   - rokibhasansagar2014@outlook.com
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
