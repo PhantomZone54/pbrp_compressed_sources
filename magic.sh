@@ -22,7 +22,7 @@ FTPPass=$8
 
 # Get the latest repo
 PATH=~/bin:$PATH
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+curl -L https://github.com/akhilnarang/repo/raw/master/repo -o ~/bin/repo
 chmod a+x ~/bin/repo
 
 # Github Authorization
@@ -43,7 +43,12 @@ time repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j32
 
 echo -e "SHALLOW Source Syncing done"
 
+cp -a .repo/manifests $(pwd)/
 rm -rf .repo/
+mkdir -p .repo && mv manifests .repo/
+
+echo -e "All files and folders here are --- "
+ls -la .
 
 cd $DIR
 mkdir upload/
