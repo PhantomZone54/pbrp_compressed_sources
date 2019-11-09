@@ -39,16 +39,18 @@ cd $DIR; mkdir $RecName; cd $RecName
 repo init -q -u $LINK -b $BRANCH --depth 1
 
 # Sync it up!
-time repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j32
+time repo sync -c -q --force-sync --no-clone-bundle --no-tags -j32
 
 echo -e "SHALLOW Source Syncing done"
 
-cp -a .repo/manifests $(pwd)/
-rm -rf .repo/
-mkdir -p .repo && mv manifests .repo/
+cd .repo/ && tree -a -L 2 && cd ..
+
+echo "Total size of files with git histories is -" && du -sh .
+( find . -type d -name ".git" && find . -name ".gitignore" ) | xargs rm -rf
+echo "After deleting git junks, total size is -" && du -sh .
 
 echo -e "All files and folders here are --- "
-ls -la .
+tree -a -L 2
 
 cd $DIR
 mkdir upload/
