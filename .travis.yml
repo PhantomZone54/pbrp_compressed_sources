@@ -10,6 +10,7 @@ addons:
     - git
     - pxz
     - wput
+    - tree
 before_install: git clone https://github.com/rokibhasansagar/twrp_compressed_sources.git ${TRAVIS_BUILD_DIR}/tranSkadooSH
 install: true
 script:
