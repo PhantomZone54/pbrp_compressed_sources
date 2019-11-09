@@ -30,17 +30,19 @@ deploy:
   file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/upload/$RecName-$BRANCH*
   overwrite: true
   on:
-    tags: true
+    tags: false
     repo: rokibhasansagar/twrp_compressed_sources
     branch: master
 branches:
+  only:
+    - master
   except:
     - /^(?i:untagged)-.*$/
-    - latest
 after_deploy:
   - cd ${TRAVIS_BUILD_DIR}/ && rm -rf tranSkadooSH/
   - echo "Cleanup Done!"
 notifications:
   email:
   - rokibhasansagar2014@outlook.com
-  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
+  webhooks:
+  - https://fathomless-fjord-24024.herokuapp.com/notify
