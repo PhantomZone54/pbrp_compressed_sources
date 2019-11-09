@@ -1,8 +1,9 @@
 os: linux
 dist: xenial
+language: minimal
 sudo: required
 git:
-  depth: 3
+  depth: 1
 addons:
   apt:
     update: true
@@ -19,19 +20,23 @@ script:
   - chmod +x ./magic.sh
   - ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 after_success: echo "Congratulations! Job Done!"
+before_deploy:
+  - git tag latest
 deploy:
   skip_cleanup: true
   provider: releases
   api_key: "$GitOAUTHToken"
   file_glob: true
   file: ${TRAVIS_BUILD_DIR}/tranSkadooSH/upload/$RecName-$BRANCH*
+  overwrite: true
   on:
-    tags: false
+    tags: true
     repo: rokibhasansagar/twrp_compressed_sources
     branch: master
 branches:
   except:
     - /^(?i:untagged)-.*$/
+    - latest
 after_deploy:
   - cd ${TRAVIS_BUILD_DIR}/ && rm -rf tranSkadooSH/
   - echo "Cleanup Done!"
