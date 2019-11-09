@@ -43,14 +43,8 @@ time repo sync -c -q --force-sync --no-clone-bundle --no-tags -j32
 
 echo -e "SHALLOW Source Syncing done"
 
-cd .repo/ && tree -a -L 2 && cd ..
-
-echo "Total size of files with git histories is -" && du -sh .
-( find . -type d -name ".git" && find . -name ".gitignore" ) | xargs rm -rf
-echo "After deleting git junks, total size is -" && du -sh .
-
 echo -e "All files and folders here are --- "
-tree -a -L 2
+tree -a -L 3
 
 cd $DIR
 mkdir upload/
