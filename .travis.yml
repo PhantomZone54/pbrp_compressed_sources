@@ -21,7 +21,7 @@ script:
   - ./magic.sh $RecName $LINK $BRANCH $GitHubMail $GitHubName $FTPHost $FTPUser $FTPPass
 after_success: echo "Congratulations! Job Done!"
 before_deploy:
-  - git tag latest
+  - git tag -f latest
 deploy:
   skip_cleanup: true
   provider: releases
