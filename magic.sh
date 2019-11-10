@@ -43,9 +43,6 @@ time repo sync -c -q --force-sync --no-clone-bundle --no-tags -j32
 
 echo -e "SHALLOW Source Syncing done"
 
-echo -e "All files and folders here are --- "
-tree -a -L 3
-
 cd $DIR
 mkdir upload/
 
@@ -94,4 +91,3 @@ for file in $RecName-$BRANCH*; do wput $file ftp://"$FTPUser":"$FTPPass"@"$FTPHo
 echo -e " Done uploading to AFH"
 
 echo -e "\nCongratulations! Job Done!"
-echo -e " Everything done! "
