@@ -1,9 +1,9 @@
-# TWRP Compressed Sources
+# PBRP Compressed Sources
 
-[![Project tranSkadooSH](https://img.shields.io/badge/Project%20tranSkadooSH-On%20Travis%20CI-green.svg "Go to Project tranSkadooSH")](https://github.com/rokibhasansagar/tranSkadooSH)
-![Travis Build Status](https://travis-ci.org/rokibhasansagar/twrp_compressed_sources.svg?branch=master "Build Status")
+![CircleCI Build Status](https://img.shields.io/circleci/build/github/PhantomZone54/pbrp_compressed_sources/master?label=CircleCI%20Builds&logo=circleci "Build Status")
+![GitHub all releases](https://img.shields.io/github/downloads/PhantomZone54/pbrp_compressed_sources/total?label=Total%20Downloads)
 
-Sometimes it is hard to get the _repo files_ to build _TWRP_
+Sometimes it is hard to get the _repo files_ to build _PBRP_
 :worried:
 
 That's why I used _Regalstreak_'s Project *Skadoosh* by slightly modifying as my [_tranSkadooSH_](https://github.com/rokibhasansagar/tranSkadooSH). :smirk:

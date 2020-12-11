@@ -1,0 +1,29 @@
+version: 2.1
+
+executors:
+  alpine:
+    docker:
+      - image: fr3akyphantom/skadoosh:latest
+        auth:
+          username: "$DOCKER_USERNAME"
+          password: "$DOCKERHUB_TOKEN"
+
+jobs:
+  build:
+    executor: alpine
+    steps:
+      - checkout
+      - run:
+          name: "Compression Job for Minimal PBRP for Marshmallow branch"
+          command: |
+            chmod a+x .circleci/keepalive.sh
+            .circleci/keepalive.sh & ./script.sh
+            kill -s SIGTERM $(cat /tmp/keepalive.pid) || true
+
+workflows:
+  version: 2
+  compress-norepo:
+    jobs:
+      - build:
+          context: org-global
+
