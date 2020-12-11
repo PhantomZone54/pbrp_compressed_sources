@@ -22,8 +22,9 @@ FTPPass=$8
 
 # Get the latest repo
 PATH=~/bin:$PATH
-curl -L https://github.com/akhilnarang/repo/raw/master/repo -o ~/bin/repo
-chmod a+x ~/bin/repo
+curl -sL https://github.com/GerritCodeReview/git-repo/raw/stable/repo -o ~/bin/repo
+sed -i '1s/python/python3/g' ~/bin/repo
+chmod a+rx ~/bin/repo
 
 # Github Authorization
 git config --global user.email $GitHubMail
@@ -39,7 +40,7 @@ cd $DIR; mkdir $RecName; cd $RecName
 repo init -q -u $LINK -b $BRANCH --depth 1
 
 # Sync it up!
-time repo sync -c -q --force-sync --no-clone-bundle --no-tags -j32
+time repo sync -c -q --force-sync --no-clone-bundle --no-tags -j16
 
 echo -e "SHALLOW Source Syncing done"
 
