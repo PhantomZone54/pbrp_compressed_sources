@@ -19,7 +19,7 @@ git config --global user.name $GitHubName
 git config --global color.ui true
 
 git clone -q "https://$GITHUB_TOKEN@github.com/rokibhasansagar/google-git-cookies.git" &> /dev/null
-if [ -e google-git-cookies ]; then
+if [[ -e google-git-cookies ]]; then
   bash google-git-cookies/setup_cookies.sh
   rm -rf google-git-cookies
 fi
@@ -51,7 +51,6 @@ printf "Cleaning up the .repo, no use of it now\n"
 rm -rf .repo
 mkdir -p .repo && mv repomanifests/manifests .repo/ && ln -s .repo/manifests/default.xml .repo/manifest.xml && rm -rf repomanifests
 
-
 find . \( \( -type d -a -name ".git" \) -o \( -type f -a \( -name ".gitignore" -o -name ".gitmodules" -o -name ".gitattributes" \) \) \) -exec rm -rf -- '{}' +; 2>/dev/null
 
 cd $DIR
@@ -73,7 +72,7 @@ sleep 2s
 mkdir -p ~/project/files/
 datetime=$(date +%Y%m%d)
 
-if [ $DDF -gt 6144 ]; then
+if [[ $DDF -gt 6144 ]]; then
   printf "Compressing and Making 1 GB parts Because of Huge Data Amount \nBe Patient...\n"
   tar -I'zstd -19 -T3 --long --adapt --format=zstd' -cf - * | split -b 1024M - ~/project/files/$RecName-$BRANCH-norepo-$datetime.tzst. || exit 1
 else
@@ -113,7 +112,7 @@ done
 cd ~/project/
 printf "Uploading %s to SourceForge...\n" $RecName-$BRANCH
 sf_gen=''
-until [ $sf_gen -eq 0 ]; do
+until [[ $sf_gen -eq 0 ]]; do
   printf "exit\n" | sshpass -p "$SFPass" ssh -tto StrictHostKeyChecking=no $SFUser@shell.sourceforge.net create
   sf_gen=$?
   printf "SF FRS SSH returned %d\n" $sf_gen
@@ -121,7 +120,7 @@ until [ $sf_gen -eq 0 ]; do
 done
 sleep 2s
 sf_return=''
-until [ $sf_return -eq 0 ]; do
+until [[ $sf_return -eq 0 ]]; do
   rsync -arvPz --rsh="sshpass -p $SFPass ssh -l $SFUser" files/ $SFUser@shell.sourceforge.net:/home/frs/project/transkadoosh/$RecName-NoRepo/
   sf_return=$?
   sleep 1s
